@@ -10,5 +10,6 @@ export interface CustomNextApiRequest extends NextApiRequest {
     filename: string;
     path: string;
     size: number;
+    file: File; // Add this line
   };
 }
