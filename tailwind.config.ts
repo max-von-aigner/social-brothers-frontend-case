@@ -17,6 +17,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        "blog-post-card-gray": "#868686",
         "camera-icon-gray": "#888888",
         "custom-orange": "#F27623",
         "custom-gray": "#C5C5C5",

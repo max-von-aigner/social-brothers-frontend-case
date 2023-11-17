@@ -6,7 +6,14 @@ import Image from "next/image";
 
 const Header = () => {
   return (
-    <header className="bg-header-image h-[208px] w-[1440px] bg-cover bg-center   ">
+    <header
+      className="w-[1440px] h-[208px] bg-cover bg-center"
+      style={{
+        backgroundImage: `url('/assets/header-mask.png')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       {/* Logo */}
       <div className="flex ml-[162px] mb-[119px] items-center">
         <Image src="/assets/logo.svg" alt="Logo" width={240} height={57} />
