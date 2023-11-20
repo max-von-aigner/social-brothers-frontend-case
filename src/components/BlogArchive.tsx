@@ -83,12 +83,12 @@ const BlogArchive: React.FC = () => {
 
   return (
     <div className="w-[1116px] h-[507px] mx-auto">
-      <div>
+      <div className="font-sans border-solid border-custom-orange">
         {/* Dropdown for Sort Option */}
         <label htmlFor="sortOption">Sorteren:</label>
         <select id="sortOption" value={sortOption} onChange={handleSortChange}>
-          <option value="recent">Most Recent</option>
-          <option value="title">Title</option>
+          <option value="recent">Laatste</option>
+          <option value="title">Titel</option>
         </select>
       </div>
 
@@ -108,38 +108,39 @@ const BlogArchive: React.FC = () => {
         </select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {posts.map((post) => (
           <BlogPostCard key={post.id} post={post} variant="small" />
         ))}
       </div>
-
-      <ReactPaginate
-        previousLabel={"← Previous"}
-        nextLabel={"Next →"}
-        breakLabel={"..."}
-        pageCount={pageCount}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={5}
-        onPageChange={handlePageClick}
-        containerClassName={"flex justify-center mt-8"}
-        pageClassName={"mx-1"}
-        pageLinkClassName={
-          "block px-3 py-2 border rounded-md hover:border-gray-500"
-        }
-        previousClassName={"mx-1"}
-        previousLinkClassName={
-          "block px-3 py-2 border rounded-md hover:border-gray-500"
-        }
-        nextClassName={"mx-1"}
-        nextLinkClassName={
-          "block px-3 py-2 border rounded-md hover:border-gray-500"
-        }
-        breakClassName={"mx-1"}
-        breakLinkClassName={"block px-3 py-2 border rounded-md"}
-        activeClassName={"bg-blue-500 border-blue-500 text-white"}
-        forcePage={currentPage}
-      />
+      <div className="flex justify-center">
+        <ReactPaginate
+          previousLabel={"← Vorige pagina"}
+          nextLabel={"Volgende pagina →"}
+          breakLabel={"..."}
+          pageCount={pageCount}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageClick}
+          containerClassName={
+            "flex flex-grow justify-center mt-8 h-[29px] items-center w-[435px]"
+          }
+          pageClassName={"mx-1"}
+          pageLinkClassName={"block text-[12px] rounded-xl"}
+          previousClassName={"mx-1 text-[12px]"}
+          previousLinkClassName={
+            "block py-2  rounded-md text-custom-orange mr-[24px]"
+          }
+          nextClassName={"text-[12px] mx-1"}
+          nextLinkClassName={"block rounded-md text-custom-orange ml-[24px]"}
+          breakClassName={"mx-1"}
+          breakLinkClassName={"block rounded-md"}
+          activeClassName={
+            "flex items-center justify-center bg-pagination-focus-gray rounded-xl w-[34px] h-[25px] text-pagination-text font-bold text-[14px]"
+          }
+          forcePage={currentPage}
+        />
+      </div>
     </div>
   );
 };

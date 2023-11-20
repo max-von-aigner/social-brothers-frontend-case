@@ -5,15 +5,15 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main className="bg-neutral-50">
-      <div className="flex justify-center mx-auto">
+    <main className="flex flex-col min-h-screen bg-neutral-50">
+      <div className="flex justify-center">
         <Header />
       </div>
       <div className="flex justify-center gap-10 mx-auto">
         <BlogPostForm />
         <BlogPostPreview />
       </div>
-      <div className="flex justify-center mx-auto">
+      <div className="flex-col justify-center">
         <Footer />
       </div>
     </main>

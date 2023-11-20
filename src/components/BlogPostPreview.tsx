@@ -36,7 +36,8 @@ const BlogPostPreview: React.FC<BlogPostPreviewProps> = () => {
         params: {
           page: currentPage,
           perPage: postsPerPage,
-          // other parameters if needed
+          sortBy: "created_at",
+          sortDirection: "desc",
         },
       });
 
@@ -70,7 +71,7 @@ const BlogPostPreview: React.FC<BlogPostPreviewProps> = () => {
   }, [page]); // Fetch initial posts and update posts when the page changes
 
   return (
-    <div className="flex flex-col justify-between bg-white p-[24px] w-[642px] h-[659px] overflow-y-auto">
+    <div className="flex flex-col justify-between bg-white p-[24px] w-[642px] min-h-[659px] my-[64px] overflow-y-auto">
       <div className="grid grid-cols-2 gap-4 mb-4">
         {posts.map((post) => (
           <BlogPostCard key={post.id} post={post} />

@@ -1,45 +1,61 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-//justify-between flex items-center
+import { useRouter } from "next/router";
 
-const Header = () => {
+interface HeaderProps {
+  children?: ReactNode;
+}
+
+const Header: React.FC<HeaderProps> = ({ children }) => {
+  const router = useRouter();
   return (
     <header
-      className="w-[1440px] h-[208px] bg-cover bg-center"
+      className="w-full h-[208px] bg-cover bg-center"
       style={{
         backgroundImage: `url('/assets/header-mask.png')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      {/* Logo */}
-      <div className="flex ml-[162px] mb-[119px] items-center">
-        <Image src="/assets/logo.svg" alt="Logo" width={240} height={57} />
-      </div>
+      <div className="flex mt-[32px] gap-10 mx-auto justify-center">
+        {/* Logo */}
+        <div className="flex mb-[119px] w-[451px] items-center">
+          <Image src="/assets/sb-logo.svg" alt="Logo" width={240} height={57} />
+        </div>
 
-      {/* Navigation */}
-      <nav>
-        <ul className="flex space-x-4 mb-[146px] ml-[1155px] w-[123px] h-[30px]">
-          <li>
-            <Link
-              href="/"
-              className="font-sans font-semibold text-[18px] text-white"
-            >
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/blog"
-              className="font-sans font-semibold text-[18px] text-white"
-            >
-              Blog
-            </Link>
-          </li>
-        </ul>
-      </nav>
+        {/* Navigation */}
+        <nav className="w-[642px] h-[30px]">
+          <ul className="flex space-x-8 mb-[146px] justify-end">
+            <li className="relative">
+              <Link
+                href="/"
+                passHref
+                className="font-sans font-semibold text-[18px] text-white"
+              >
+                Home
+              </Link>
+              {router.pathname === "/" && (
+                <div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-orange-500"></div>
+              )}
+            </li>
+            <li className="relative">
+              <Link
+                href="/blog"
+                passHref
+                className="font-sans font-semibold text-[18px] text-white"
+              >
+                Blog
+              </Link>
+              {router.pathname === "/blog" && (
+                <div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-orange-500"></div>
+              )}
+            </li>
+          </ul>
+        </nav>
+        {children}
+      </div>
     </header>
   );
 };

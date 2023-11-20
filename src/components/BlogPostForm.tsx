@@ -145,7 +145,7 @@ const BlogPostForm: React.FC = () => {
     <form
       onSubmit={handleSubmit}
       encType="multipart/form-data" // This is important for file uploads
-      className="flex flex-col w-[451px] p-[24px] h-[649px] bg-white"
+      className="flex flex-col w-[451px] p-[24px] min-h-[659px] my-[64px] bg-white"
     >
       <span className=" font-sans font-semibold text-[24px] ">
         Plaats een blog bericht

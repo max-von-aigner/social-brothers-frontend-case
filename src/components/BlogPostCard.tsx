@@ -53,13 +53,11 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
       </CardHeader>
       <CardContent className="p-[16px] overflow-hidden">
         <CardTitle className="font-sans font-bold text-neutral-800">
-          {/* Apply ellipsis to the title using Tailwind classes */}
-          <p className="overflow-hidden whitespace-nowrap overflow-ellipsis">
+          <p className="overflow-hidden tracking-normal whitespace-nowrap overflow-ellipsis h-[29px]">
             {post.title}
           </p>
         </CardTitle>
-        {/* Apply ellipsis to the content using Tailwind classes */}
-        <p className="text-[12px] mt-[8px] text-blog-post-card-gray overflow-hidden whitespace-pre-wrap overflow-ellipsis h-[76px]">
+        <p className="text-[12px]  text-blog-post-card-gray overflow-hidden whitespace-pre-wrap overflow-ellipsis h-[76px] font-sans">
           {post.content}
         </p>
       </CardContent>

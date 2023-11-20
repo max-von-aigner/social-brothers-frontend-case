@@ -1,14 +1,19 @@
 import Header from "@/components/Header";
 import BlogArchive from "@/components/BlogArchive";
-const blogPage = () => {
+import Footer from "@/components/Footer";
+const BlogPage = () => {
   return (
-    <>
-      <div className="flex mx-auto justify-center">
-        <Header />
+    <div className="flex flex-col min-h-screen">
+      <Header>
+        <h1>Blog</h1>
+      </Header>
+      <div className="flex items-center flex-grow">
+        {/* Content area, adjust as needed */}
+        <BlogArchive />
       </div>
-      <BlogArchive />
-    </>
+      <Footer />
+    </div>
   );
 };
 
-export default blogPage;
+export default BlogPage;
