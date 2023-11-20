@@ -8,7 +8,6 @@ const BlogPage = () => {
         <h1>Blog</h1>
       </Header>
       <div className="flex items-center flex-grow">
-        {/* Content area, adjust as needed */}
         <BlogArchive />
       </div>
       <Footer />

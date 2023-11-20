@@ -1,9 +1,9 @@
 import React, {
   useState,
   useEffect,
-  useRef,
   ChangeEvent,
   FormEvent,
+  useRef,
 } from "react";
 import axios from "axios";
 import { Button } from "@/shadcn/ui/button";
@@ -17,27 +17,26 @@ import {
 } from "@/shadcn/ui/select";
 import { Label } from "@/shadcn/ui/label";
 import { Textarea } from "@/shadcn/ui/textarea";
-import CameraIcon from "./CameraIconSvg";
+import CameraIcon from "@/components/CameraIconSvg";
 
 const BlogPostForm: React.FC = () => {
+  // State hooks for form data
   const [title, setTitle] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [content, setContent] = useState("");
   const [showToast, setShowToast] = useState(false);
+  const [selectedImagePreview, setSelectedImagePreview] = useState<
+    string | null
+  >(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // State hook for category data
   const [categories, setCategories] = useState<
     Array<{ id: number; name: string }>
   >([]);
 
-  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
-  const [selectedImagePreview, setSelectedImagePreview] = useState<
-    string | null
-  >(null);
-
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  // Gets categories from getCategories API route
+  // Fetch categories on component mount
   useEffect(() => {
     async function fetchCategories() {
       try {
@@ -45,71 +44,16 @@ const BlogPostForm: React.FC = () => {
         setCategories(response.data);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
-        // Handle error - show user feedback, retry logic, etc.
       }
     }
 
     fetchCategories();
   }, []);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!title || !categoryId || !image || !content) {
-      alert("Please fill in all the fields.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("content", content);
-    formData.append("category_id", categoryId);
-    if (image instanceof File) {
-      formData.append("image", image);
-    }
-
-    console.log("API POST Payload: ", [...formData]);
-
-    try {
-      // Send the form data to createPost API route
-      const response = await axios.post("/api/createPost", formData);
-      console.log(response.data);
-      // Handle the response, e.g., show success message, clear form, etc.
-      setShowToast(true);
-
-      // Clear the form
-      setTitle("");
-      setCategoryId("");
-      setImage(null);
-      setContent("");
-
-      // Timer for success toast
-      setTimeout(() => {
-        setShowToast(false);
-      }, 3000);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Axios error - handle based on response status
-        console.error("Axios error:", error);
-        if (error.response?.status === 500) {
-          console.error("Internal Server Error:", error.response.data);
-          // Handle specific 500 error, if needed
-        } else {
-          console.error("Other Axios Error:", error.response);
-          // Handle other errors, if needed
-        }
-      } else {
-        // Non-Axios error - handle other errors
-        console.error("Unexpected error:", error);
-      }
-    }
-  };
-
+  // Handle image selection and preview
   const handlePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      setImage(selectedFile);
-      setSelectedFileName(selectedFile.name); // Set the selected file name
 
       // Read the selected file as a data URL to create a preview
       const reader = new FileReader();
@@ -119,39 +63,80 @@ const BlogPostForm: React.FC = () => {
         }
       };
       reader.readAsDataURL(selectedFile);
-    }
-  };
 
-  const handleFileLabelClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
       setImage(selectedFile);
     }
   };
 
-  const handleFileLabelKeyDown = (e: React.KeyboardEvent<HTMLLabelElement>) => {
-    if (e.key === "Enter") {
-      handleFileLabelClick();
+  // Handle form reset
+  const handleClear = () => {
+    setTitle("");
+    setCategoryId("");
+    setContent("");
+    setImage(null);
+    setSelectedImagePreview(null);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!title || !categoryId || !image || !content) {
+      alert("Please fill in all the fields.");
+      return;
+    }
+
+    // Create FormData object for API submission
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("content", content);
+    formData.append("category_id", categoryId);
+    if (image instanceof File) {
+      formData.append("image", image);
+    }
+
+    try {
+      // Send form data to createPost API route
+      const response = await axios.post("/api/createPost", formData);
+      console.log(response.data);
+
+      // Show success toast
+      setShowToast(true);
+
+      // Reset form
+      handleClear();
+
+      // Hide toast after 3 seconds
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+
+      // Remove image thumbnail
+      setSelectedImagePreview(null);
+    } catch (error) {
+      // Handle errors
+      console.error("Error:", error);
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      encType="multipart/form-data" // This is important for file uploads
-      className="flex flex-col w-[451px] p-[24px] min-h-[659px] my-[64px] bg-white"
+      encType="multipart/form-data"
+      className="flex flex-col w-[451px] p-[24px] min-h-[659px] my-[64px] bg-white relative"
     >
-      <span className=" font-sans font-semibold text-[24px] ">
+      {/* Form Title */}
+      <span className="font-sans font-semibold text-[24px]">
         Plaats een blog bericht
       </span>
-      <div className=" h-[62px] w-[403px] mt-[24px]">
-        <Label className=" text[12px] h-[15px] w-[403px] font-normal text-neutral-700">
+
+      {/* Title Input */}
+      <div className="h-[62px] w-[403px] mt-[24px] flex flex-col">
+        <Label className="text[12px] h-[15px] w-[403px] font-normal text-neutral-700">
           Berichtnaam
         </Label>
         <Input
@@ -163,8 +148,52 @@ const BlogPostForm: React.FC = () => {
         />
       </div>
 
-      <div className=" h-[62px] w-[403px] mt-[24px]">
-        <Label className=" text[12px] h-[15px] w-[403px] font-normal text-neutral-700">
+      {/* Image Upload Section */}
+      <div className="h-[62px] w-[403px] mt-[24px] flex flex-col">
+        <Label className="text[12px] h-[15px] w-[403px] font-normal text-neutral-700">
+          Header afbeelding
+        </Label>
+        <div className="flex">
+          <div className="flex items-center bg-neutral-50 w-[146px] h-[39px] px-[16px] justify-between">
+            <CameraIcon className="w-[17px] font-semibold text-gray-500" />
+            <Label
+              htmlFor="image"
+              tabIndex={0}
+              className="flex items-center justify-center text[12px] h-[20px] w-[86px] bg-custom-button-gray hover:bg-primary/90 font-normal text-white text-[10px] rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              id="file-upload-button"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && fileInputRef.current) {
+                  fileInputRef.current.click();
+                }
+              }}
+            >
+              Kies bestand
+            </Label>
+            <input
+              id="image"
+              type="file"
+              accept=".jpg, .png, .jpeg"
+              ref={fileInputRef}
+              onChange={handlePictureChange}
+              className="rounded-none bg-neutral-50 border-transparent mt-[8px] hidden"
+              style={{ display: "none" }}
+            />
+          </div>
+          {selectedImagePreview && (
+            <div className="flex items-center">
+              <img
+                src={selectedImagePreview}
+                alt="Selected Preview"
+                className="rounded object-cover h-[39px] w-[39px]"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Category Select */}
+      <div className="h-[62px] w-[403px] mt-[24px] flex flex-col">
+        <Label className="text[12px] h-[15px] w-[403px] font-normal text-neutral-700">
           Categorie
         </Label>
         <Select
@@ -184,47 +213,11 @@ const BlogPostForm: React.FC = () => {
         </Select>
       </div>
 
-      <div className=" h-[62px] w-[403px] mt-[24px] flex flex-col">
-        <Label className=" text[12px] h-[15px] w-[403px] font-normal text-neutral-700">
-          Header afbeelding
-        </Label>
-        <div className="flex">
-          <div className=" flex items-center bg-neutral-50 w-[146px] h-[39px] px-[16px] justify-between">
-            <CameraIcon className="w-[17px] font-semibold text-gray-500" />
-            <Label
-              htmlFor="image"
-              onClick={handleFileLabelClick}
-              onKeyDown={handleFileLabelKeyDown}
-              tabIndex={0}
-              className="flex items-center justify-center text[12px] h-[20px] w-[86px] bg-custom-button-gray hover:bg-primary/90 font-normal text-white text-[10px] rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 "
-              id="file-upload-button"
-            >
-              Kies bestand
-            </Label>
-            <Input
-              id="image"
-              type="file"
-              accept=".jpg, .png, .jpeg"
-              onChange={handleFileInputChange}
-              ref={fileInputRef}
-              className="rounded-none bg-neutral-50 border-transparent mt-[8px]"
-              style={{ display: "none" }}
-            />
-          </div>
-          {selectedImagePreview && (
-            <img
-              src={selectedImagePreview}
-              alt="Selected Preview"
-              className="rounded object-cover h-[39px] w-[39px]"
-            />
-          )}
-        </div>
-      </div>
-
-      <div className=" h-[237px] w-[403px] mt-[24px]">
+      {/* Content Textarea */}
+      <div className="h-[237px] w-[403px] mt-[24px] flex flex-col">
         <Label
           htmlFor="blogText"
-          className=" text[12px] h-[15px] w-[403px] font-normal text-neutral-700"
+          className="text[12px] h-[15px] w-[403px] font-normal text-neutral-700"
         >
           Bericht
         </Label>
@@ -235,6 +228,8 @@ const BlogPostForm: React.FC = () => {
           className="rounded-none bg-neutral-50 border-transparent w-[403px] h-[214px] mt-[8px]"
         />
       </div>
+
+      {/* Submit Button */}
       <div className="flex justify-center mt-[24px]">
         <Button
           type="submit"
@@ -243,8 +238,10 @@ const BlogPostForm: React.FC = () => {
           Bericht aanmaken
         </Button>
       </div>
+
+      {/* Toast Notification */}
       {showToast && (
-        <div className="text-white bg-green-500 border-gray-600 toast">
+        <div className="absolute h-20 p-4 font-sans text-center text-black border-gray-600 bottom-24 w-52 toast bg-green-500/50 rounded-2xl">
           Bericht aangemaakt! ✨
         </div>
       )}

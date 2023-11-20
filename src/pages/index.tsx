@@ -9,7 +9,7 @@ export default function Home() {
       <div className="flex justify-center">
         <Header />
       </div>
-      <div className="flex justify-center gap-10 mx-auto">
+      <div className="flex justify-center flex-grow gap-10 mx-auto">
         <BlogPostForm />
         <BlogPostPreview />
       </div>

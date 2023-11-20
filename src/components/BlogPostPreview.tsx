@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/shadcn/ui/button";
 
+// Define types for blog post category and blog post
 export type BlogPostCategory = {
   id: number;
   name: string;
@@ -21,14 +22,18 @@ export type BlogPost = {
   category: BlogPostCategory;
 };
 
+// Define props for the BlogPostPreview component
 interface BlogPostPreviewProps {}
 
+// BlogPostPreview component
 const BlogPostPreview: React.FC<BlogPostPreviewProps> = () => {
+  // Constants and state hooks for pagination and data
   const postsPerPage: number = 4;
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [page, setPage] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  // Function to fetch blog posts from the API
   const fetchPosts = async (currentPage: number) => {
     setIsLoading(true);
     try {
@@ -43,7 +48,7 @@ const BlogPostPreview: React.FC<BlogPostPreviewProps> = () => {
 
       console.log("API Response:", response.data);
 
-      // Filter out duplicate posts before updating the state
+      // Update the state with new posts, avoiding duplicates
       setPosts((prevPosts) => {
         const newPosts = response.data.data.filter(
           (newPost: BlogPost) =>
@@ -58,25 +63,30 @@ const BlogPostPreview: React.FC<BlogPostPreviewProps> = () => {
     }
   };
 
+  // Event handler for loading more posts
   const handleLoadMore = () => {
     setPage((prevPage) => {
       const nextPage = prevPage + 1;
-      fetchPosts(nextPage); // Fetch new posts with the updated page value
-      return nextPage; // Return the updated page value
+      fetchPosts(nextPage);
+      return nextPage;
     });
   };
 
+  // Fetch initial posts on component mount and when the page changes
   useEffect(() => {
     fetchPosts(page);
-  }, [page]); // Fetch initial posts and update posts when the page changes
+  }, [page]);
 
+  // Render the component
   return (
     <div className="flex flex-col justify-between bg-white p-[24px] w-[642px] min-h-[659px] my-[64px] overflow-y-auto">
+      {/* Grid of BlogPostCard components */}
       <div className="grid grid-cols-2 gap-4 mb-4">
         {posts.map((post) => (
           <BlogPostCard key={post.id} post={post} />
         ))}
       </div>
+      {/* Loading indicator or Load More button */}
       {isLoading ? (
         <p>Loading...</p>
       ) : (

@@ -3,7 +3,19 @@ import ReactPaginate from "react-paginate";
 import axios from "axios";
 import BlogPostCard from "./BlogPostCard";
 import { BlogPost } from "./BlogPostPreview";
+import {
+  BlogArchiveSelect,
+  BlogArchiveSelectGroup,
+  BlogArchiveSelectValue,
+  BlogArchiveSelectTrigger,
+  BlogArchiveSelectContent,
+  BlogArchiveSelectLabel,
+  BlogArchiveSelectItem,
+  BlogArchiveSelectSeparator,
+} from "./BlogArchiveSelect";
+import { BlogArchiveLabel } from "./BlogArchiveLabel";
 
+// Define types for sorting and filtering options
 type SortOption = "recent" | "title";
 type FilterOption =
   | "all"
@@ -13,6 +25,7 @@ type FilterOption =
   | "category4";
 
 const BlogArchive: React.FC = () => {
+  // Constants and state hooks for pagination and data
   const postsPerPage: number = 8;
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [pageCount, setPageCount] = useState<number>(0);
@@ -20,18 +33,60 @@ const BlogArchive: React.FC = () => {
   const [sortOption, setSortOption] = useState<SortOption>("recent");
   const [filterOption, setFilterOption] = useState<FilterOption>("all");
 
+  // Event handler for page change
   const handlePageClick = (selectedItem: { selected: number }) => {
     setCurrentPage(selectedItem.selected);
   };
 
+  // Event handler for sort option change
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOption(event.target.value as SortOption);
   };
 
+  // Event handler for filter option change
   const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setFilterOption(event.target.value as FilterOption);
   };
 
+  // Utility function to map filter options to category IDs
+  const getCategoryByFilterOption = (
+    filterOption: FilterOption
+  ): number | undefined => {
+    switch (filterOption) {
+      case "category1":
+        return 1;
+      case "category2":
+        return 2;
+      case "category3":
+        return 3;
+      case "category4":
+        return 4;
+      default:
+        return undefined;
+    }
+  };
+
+  // State hook for storing category data
+  const [categories, setCategories] = useState<
+    Array<{ id: number; name: string }>
+  >([]);
+
+  // Fetch categories on component mount
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const response = await axios.get("/api/getCategories");
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+        // Handle error - show user feedback, retry logic, etc.
+      }
+    }
+
+    fetchCategories();
+  }, []);
+
+  // Fetch posts based on pagination, sorting, and filtering options
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -40,7 +95,7 @@ const BlogArchive: React.FC = () => {
             page: currentPage + 1,
             perPage: postsPerPage,
             sortBy: sortOption === "recent" ? "created_at" : "title",
-            sortDirection: "desc", // For recent posts, use descending order
+            sortDirection: "desc",
             searchPhrase: "",
             categoryId:
               filterOption === "all"
@@ -64,55 +119,74 @@ const BlogArchive: React.FC = () => {
     fetchPosts();
   }, [currentPage, sortOption, filterOption]);
 
-  const getCategoryByFilterOption = (
-    filterOption: FilterOption
-  ): number | undefined => {
-    switch (filterOption) {
-      case "category1":
-        return 1;
-      case "category2":
-        return 2;
-      case "category3":
-        return 3;
-      case "category4":
-        return 4;
-      default:
-        return undefined;
-    }
-  };
-
   return (
-    <div className="w-[1116px] h-[507px] mx-auto">
-      <div className="font-sans border-solid border-custom-orange">
-        {/* Dropdown for Sort Option */}
-        <label htmlFor="sortOption">Sorteren:</label>
-        <select id="sortOption" value={sortOption} onChange={handleSortChange}>
-          <option value="recent">Laatste</option>
-          <option value="title">Titel</option>
-        </select>
+    <div className="w-[1116px]  mx-auto">
+      {/* Sort and Filter Dropdowns */}
+      <div className="flex gap-4 mb-4">
+        {/* Sort Dropdown */}
+        <div className="flex font-sans">
+          <BlogArchiveLabel
+            htmlFor="sortOption"
+            className="flex items-center w-20"
+          >
+            Sorteren:
+          </BlogArchiveLabel>
+          <BlogArchiveSelect
+            value={sortOption}
+            onValueChange={(value) => setSortOption(value as SortOption)}
+          >
+            <BlogArchiveSelectTrigger className="rounded-none bg-neutral-50 border-transparent mt-[8px]">
+              <BlogArchiveSelectValue placeholder="Geen categorie" />
+            </BlogArchiveSelectTrigger>
+            <BlogArchiveSelectContent>
+              <BlogArchiveSelectItem value="recent">
+                Laatste
+              </BlogArchiveSelectItem>
+              <BlogArchiveSelectItem value="title">Titel</BlogArchiveSelectItem>
+            </BlogArchiveSelectContent>
+          </BlogArchiveSelect>
+        </div>
+
+        {/* Filter Dropdown */}
+        <div className="flex">
+          <BlogArchiveLabel
+            htmlFor="filterOption"
+            className="flex items-center w-20"
+          >
+            Filteren:{" "}
+          </BlogArchiveLabel>
+          <BlogArchiveSelect
+            value={filterOption}
+            onValueChange={(value) => setFilterOption(value as FilterOption)}
+          >
+            <BlogArchiveSelectTrigger className="rounded-none bg-neutral-50 border-transparent mt-[8px]">
+              <BlogArchiveSelectValue placeholder="Geen categorie" />
+            </BlogArchiveSelectTrigger>
+            <BlogArchiveSelectContent>
+              <BlogArchiveSelectItem value="all">
+                Alle categorieën
+              </BlogArchiveSelectItem>
+              {categories.map((category) => (
+                <BlogArchiveSelectItem
+                  key={category.id}
+                  value={`category${category.id}`}
+                >
+                  {category.name}
+                </BlogArchiveSelectItem>
+              ))}
+            </BlogArchiveSelectContent>
+          </BlogArchiveSelect>
+        </div>
       </div>
 
-      <div>
-        {/* Dropdown for Filter Option */}
-        <label htmlFor="filterOption">Filteren: </label>
-        <select
-          id="filterOption"
-          value={filterOption}
-          onChange={handleFilterChange}
-        >
-          <option value="all">Alle categorieën</option>
-          <option value="category1">Tech</option>
-          <option value="category2">Nieuws</option>
-          <option value="category3">Sports</option>
-          <option value="category4">Lokaal</option>
-        </select>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Blog Post Cards */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 min-h-[507px]">
         {posts.map((post) => (
           <BlogPostCard key={post.id} post={post} variant="small" />
         ))}
       </div>
+
+      {/* Pagination */}
       <div className="flex justify-center">
         <ReactPaginate
           previousLabel={"← Vorige pagina"}

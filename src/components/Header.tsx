@@ -12,7 +12,7 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
   const router = useRouter();
   return (
     <header
-      className="w-full h-[208px] bg-cover bg-center"
+      className="relative w-full h-[208px] bg-cover bg-center"
       style={{
         backgroundImage: `url('/assets/header-mask.png')`,
         backgroundSize: "cover",
@@ -37,7 +37,7 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
                 Home
               </Link>
               {router.pathname === "/" && (
-                <div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-orange-500"></div>
+                <div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-nav-border-orange"></div>
               )}
             </li>
             <li className="relative">
@@ -49,12 +49,14 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
                 Blog
               </Link>
               {router.pathname === "/blog" && (
-                <div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-orange-500"></div>
+                <div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-nav-border-orange"></div>
               )}
             </li>
           </ul>
         </nav>
-        {children}
+        <div className="absolute top-[133px] font-sans text-[48px] font-bold text-white h-[62px] text-center tracking-normal">
+          {children}
+        </div>
       </div>
     </header>
   );

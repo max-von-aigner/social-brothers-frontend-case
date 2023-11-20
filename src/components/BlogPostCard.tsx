@@ -8,11 +8,11 @@ import {
   CardTitle,
 } from "@/shadcn/ui/card";
 
-import { BlogPost } from "./BlogPostPreview"; // imported type
+import { BlogPost } from "./BlogPostPreview";
 
 type BlogPostCardProps = {
   post: BlogPost;
-  variant?: "normal" | "small"; // Accept variant prop for different sizes in Homepage and Blogpage
+  variant?: "normal" | "small";
 };
 
 const BlogPostCard: React.FC<BlogPostCardProps> = ({

@@ -24,6 +24,7 @@ module.exports = {
         "custom-button-gray": "#7D7D7D",
         "pagination-focus-gray": "#E7E7E7",
         "pagination-text-black": "#383838",
+        "nav-border-orange": "#E95E30",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
