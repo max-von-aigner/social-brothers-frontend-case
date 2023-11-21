@@ -241,8 +241,10 @@ const BlogPostForm: React.FC = () => {
 
       {/* Toast Notification */}
       {showToast && (
-        <div className="absolute h-20 p-4 font-sans text-center text-black border-gray-600 bottom-24 w-52 toast bg-green-500/50 rounded-2xl">
-          Bericht aangemaakt! ✨
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="h-10 p-4 font-sans text-center text-black border-gray-600 bottom-24 w-52 toast bg-green-500/50 rounded-2xl flex items-center justify-center">
+            <span className="text-center">Bericht aangemaakt! ✨ </span>
+          </div>
         </div>
       )}
     </form>
